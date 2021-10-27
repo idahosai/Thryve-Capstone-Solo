@@ -1,0 +1,527 @@
+{% extends 'base.html' %} {% block content %}
+{% load static %}
+<link href="{% static 'packages/core/main.css' %}" rel='stylesheet' />
+<link href="{% static 'packages/daygrid/main.css' %}" rel='stylesheet' />
+<script src="{% static 'packages/core/main.js' %}"></script>
+<script src="{% static 'packages/interaction/main.js' %}"></script>
+<script src="{% static 'packages/daygrid/main.js' %}"></script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css"
+    href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:400,700|Material+Icons" />
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+<!-- Material Kit CSS -->
+<link rel="stylesheet" href="{% static 'css/material-dashboard.css'%}" />
+<link rel="stylesheet" href="{% static 'css/appointments.css'%}" />
+<style>
+    #calendar {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+</style>
+<div class="wrapper ">
+    <div class="sidebar" data-color="purple" data-background-color="black" data-image="./assets/img/sidebar-2.jpg">
+        <div class="logo">
+            <a href="{% url 'overview' %}" class="simple-text logo-normal">
+                Thryve
+            </a>
+        </div>
+        <div class="sidebar-wrapper">
+            <ul class="nav">
+                <li class="nav-item   ">
+                    <a class="nav-link" href="{% url 'overview' %}">
+                        <i class="material-icons">dashboard</i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'appointments' %}">
+                        <i class="material-icons">calendar_today</i>
+                        <p>View Calendar</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'manageData' %}">
+                        <i class="material-icons">folder</i>
+                        <p>Manage Data</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'data_dashboard' %}">
+                        <i class="material-icons">bubble_chart</i>
+                        <p>Data Analysis</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'account' %}">
+                        <i class="material-icons">person</i>
+                        <p>Account Management</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="#">
+                        <i class="material-icons">notifications</i>
+                        <p>Notifications</p>
+                    </a>
+                </li>
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'editmeetingcomments' %}">
+                        <i class="material-icons">subject</i>
+                        <p>Edit Meeting Comments</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'filterData' %}">
+                        <i class="material-icons">find_in_page</i>
+                        <p>Filter Data</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'logout_btn' %}">
+                        <i class="material-icons">backspace</i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div>
+        <div>
+            <p>{{appointments.title}}</p>
+        </div>
+    </div>
+    <div class="main-panel">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
+            <div class="container-fluid">
+                <div class="navbar-wrapper">
+                    <a class="navbar-brand" href="javascript:void(0)">Appointments</a>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="navbar-toggler-icon icon-bar"></span>
+                    <span class="navbar-toggler-icon icon-bar"></span>
+                    <span class="navbar-toggler-icon icon-bar"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="javascript:void(0)">
+                                <i class="material-icons">notifications</i>
+                                <p class="d-lg-none d-md-block">
+                                    Notifications
+                                </p>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- End Navbar -->
+        <div class="content">
+            {% include 'partials/_alerts.html' %}
+            <div class="container-fluid" style="margin-top: 2rem;">
+                <div id='calendar'></div>
+            </div>
+            <div class="modal fade" id="modalContactForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <form action="get-appointment" method="POST">
+                        {% csrf_token %}
+                        <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h4 class="modal-title w-100 font-weight-bold">Book Appointment</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body mx-3">
+                                <div class="md-form mb-5">
+                                    <input name="fname" type="text" id="form34" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form34">Student First Name
+                                    </label>
+                                </div>
+                                <div class="md-form mb-5">
+                                    <input name="lname" type="text" id="form34" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form34">Student Last Name
+                                    </label>
+                                </div>
+                                <div class="md-form mb-5">
+                                    <input name="studentid" type="text" id="form34" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form34">Student ID
+                                    </label>
+                                </div>
+                                <div class="md-form mb-5">
+                                    <input name="email" type="text" id="form34" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form34">Student Email
+                                    </label>
+                                </div>
+                                <div class="checkboxes">
+                                    <div class="md-form mb-5">
+                                        <label data-error="wrong" data-success="right" for="form34">ALS <input
+                                                name="als" type="checkbox" id="form34"
+                                                class="form-control validate als-check" value="als">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+                                        <label data-error="wrong" data-success="right" for="form34">Co-op <input
+                                                name="coop" value="coop" type="checkbox" id="form34"
+                                                class="form-control validate">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+
+                                        <label data-error="wrong" data-success="right" for="form34">International <input
+                                                name="international" type="checkbox" id="form34" value="int"
+                                                class="form-control validate">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="checkboxes">
+                                    <h3>Education Level</h3>
+                                    <div class="md-form mb-5">
+                                        <label data-error="wrong" data-success="right" for="form34">Degree<input
+                                                name="edu" type="checkbox" id="form34"
+                                                class="form-control validate als-check" value="Degree">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+                                        <label data-error="wrong" data-success="right" for="form34">Diploma<input
+                                                name="edu" value="Diploma" type="checkbox" id="form34"
+                                                class="form-control validate">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+
+                                        <label data-error="wrong" data-success="right" for="form34">Certificate<input
+                                                name="edu" type="checkbox" id="form34" value="Certificate"
+                                                class="form-control validate">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="checkboxes">
+                                    <h3>Program Year</h3>
+                                    <div class="md-form mb-5">
+                                        <label data-error="wrong" data-success="right" for="form34">1<input name="year"
+                                                type="checkbox" id="form34" class="form-control validate als-check"
+                                                value="1">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+                                        <label data-error="wrong" data-success="right" for="form34">2<input name="year"
+                                                value="2" type="checkbox" id="form34"
+                                                class="form-control validate als-check">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+
+                                        <label data-error="wrong" data-success="right" for="form34">3<input name="year"
+                                                type="checkbox" id="form34" value="3"
+                                                class="form-control validate als-check">
+                                        </label>
+                                    </div>
+                                    <div class="md-form mb-5">
+
+                                        <label data-error="wrong" data-success="right" for="form34">4<input name="year"
+                                                type="checkbox" id="form34" value="4"
+                                                class="form-control validate als-check">
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="md-form mb-5">
+                                    <input name="grade" type="text" id="form34" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form34">Grade
+                                    </label>
+                                </div>
+                                <div class="md-form mb-5">
+                                    <input name="title" type="text" id="form34" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form34">Appointment
+                                        Reason</label>
+                                </div>
+
+                                <div class="md-form mb-5">
+                                    <i class="fas fa-envelope prefix grey-text"></i>
+                                    <input name="start_date" type="text" id="form29" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form29">Appointment Start
+                                        Time</label>
+                                </div>
+
+                                <div class="md-form mb-5">
+                                    <i class="fas fa-tag prefix grey-text"></i>
+                                    <input name="end_date" type="text" id="form32" class="form-control validate">
+                                    <label data-error="wrong" data-success="right" for="form32">Appointment End
+                                        Time</label>
+                                </div>
+
+                                <div class="md-form">
+                                    <i class="fas fa-pencil prefix grey-text"></i>
+                                    <textarea name="description" type="text" id="form8" class="md-textarea form-control"
+                                        rows="4"></textarea>
+                                    <label data-error="wrong" data-success="right" for="form8">Your message</label>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer d-flex justify-content-center">
+                                <button type="submit" class="btn btn-unique">Send <i
+                                        class="fas fa-paper-plane-o ml-1"></i></button>
+                            </div>
+                        </div>
+                </div>
+                </form>
+            </div>
+
+            <div class="text-center">
+                <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal"
+                    data-target="#modalContactForm">Book Appointment</a>
+            </div>
+
+            <!-- CANCEL APPOINTMENT!!! -->
+            <div class="modal fade" id="CancelForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div style="overflow: auto; width:800px" class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4 class="modal-title w-100 font-weight-bold">Cancel Appointment</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div style="overflow:auto;" class="modal-body row">
+                            <table style="overflow: auto;" style="width:100%;" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Student Name</th>
+                                        <th>Student ID</th>
+                                        <th>Student Email</th>
+                                        <th>Title</th>
+                                        <th>Appointment Start</th>
+                                        <th>Appointment End</th>
+                                        <th>Description</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                    <tr>
+                                        <td>{{appointment.student_id.fname}}<br>{{appointment.student_id}}</td>
+                                        <td>{{appointment.student_id.student_number}}</td>
+                                        <td>{{appointment.student_id.email}}</td>
+                                        <td>{{appointment.title}}</td>
+                                        <td>{{appointment.start_date}}</td>
+                                        <td>{{appointment.end_date}}</td>
+                                        <td>{{appointment.description}}</td>
+                                        <td>
+                                            <form id="delete-appointment"
+                                                action="{% url 'delete-appointment' appointment.id %}" method="POST">
+                                                {% csrf_token %}
+                                                <button class="btn btn-danger" type="submit">X</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#CancelForm">Cancel
+                    Appointment</a>
+            </div>
+
+            <!-- EDIT APPOINTMENT!!! -->
+            <div class="modal fade" id="EditForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div style="width:800px;" class="modal-content">
+                        <div class="modal-header text-center">
+                            <h4 class="modal-title w-100 font-weight-bold">Change Appointment</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div style="overflow:auto;" class="modal-body">
+                            {% for appointment in appointments %}
+                            <form action="{% url 'edit-appointment' appointment.id %}" method="POST">
+                                {% csrf_token %}
+                                <table style="width:100%;" class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Student First Name</th>
+                                            <th>Student Last Name</th>
+                                            <th>Student ID</th>
+                                            <th>Student Email</th>
+                                            <th>Title</th>
+                                            <th>Appointment Start</th>
+                                            <th>Appointment End</th>
+                                            <th>Description</th>
+                                            <th>Save</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody class="tablebody-data">
+                                        <tr>
+                                            <td>{{appointment.student_id.fname}}</td>
+                                            <td>{{appointment.student_id}}</td>
+                                            <td>{{appointment.student_id.student_number}}</td>
+                                            <td>{{appointment.student_id.email}}</td>
+                                            <td>{{appointment.title}}</td>
+                                            <td>{{appointment.start_date}}</td>
+                                            <td>{{appointment.end_date}}</td>
+                                            <td>{{appointment.description}}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>
+                                                <input value="" type="text" name="fname" id="edit{{appointment.id}}"
+                                                    class="form-control validate">
+                                            </td>
+                                            <td>
+                                                <input value="" type="text" name="lname" id="edit{{appointment.id}}"
+                                                    class="form-control validate">
+                                            </td>
+                                            <td>
+                                                <input value="" type="text" name="studentnumber"
+                                                    id="edit{{appointment.id}}" class="form-control validate">
+                                            </td>
+                                            <td>
+                                                <input value="" type="email" name="email" id="edit{{appointment.id}}"
+                                                    class="form-control validate">
+                                            </td>
+                                            <td>
+                                                <input value="" type="text" name="title" id="edit{{appointment.id}}"
+                                                    class="form-control validate">
+                                            </td>
+                                            <td><input name="start_date" value="" type="text" id="form356"
+                                                    class="form-control validate">
+                                            </td>
+                                            <td><input name="end_date" value="" type="text" id="form367"
+                                                    class="form-control validate">
+                                            </td>
+                                            <td><textarea name="description" value="" type="text" id="form378"
+                                                    class="md-textarea form-control" rows="4"></textarea></td>
+                                            <td>
+                                                <button class="update-btn btn btn-danger" type="submit">Update</button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <a href="" class="btn btn-default btn-rounded mb-4" data-toggle="modal" data-target="#EditForm">Change
+                    Appointment</a>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="container-fluid">
+                <nav class="float-left">
+                    <ul>
+                        <li>
+                            <a href="./home.html">
+                                Thryve
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="copyright float-right">
+                    &copy;
+                    <script>
+                        document.write(new Date().getFullYear())
+                    </script>
+                </div>
+                <!--footer here -->
+            </div>
+        </footer>
+    </div>
+</div>
+{% block javascript %}
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+<script>
+    //api-appointments
+    $(".delete-form").submit(function (e) {
+        $.ajax({
+            url: "delete-appointment/{{appointment.id}}/",
+            type: 'DELETE',
+            data: $(".delete-form").serialize(),
+            cache: false,
+            dataType: "text",
+            success: function (data) {},
+            error: function () {
+                console.log("ERROR")
+            }
+        })
+    })
+
+
+    var obj_ex = {}
+    var ex_obj = [];
+
+    document.addEventListener('DOMContentLoaded', function () {
+        function callCalendar(data) {
+            console.log(data);
+            var calendarEl = document.getElementById('calendar');
+            appt_dates(data);
+            console.log("ISSSA ME", ex_obj);
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: ['interaction', 'dayGrid'],
+                header: {
+                    left: 'prevYear,prev,next,nextYear today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
+                defaultDate: '2020-02-12',
+                navLinks: true, // can click day/week names to navigate views
+                editable: true,
+                eventLimit: true, // allow "more" link when too many events
+                events: ex_obj
+            });
+
+            calendar.render();
+        }
+        const get_title = async () => {
+            var url =
+                "get-appointment";
+            const response = await fetch(url);
+            const data = await response.json();
+            return data
+        };
+
+        get_title().then(data => {
+            callCalendar(data);
+        });
+
+        function appt_dates(data) {
+
+            for (i = 0; i < Object.keys(data['appointments']).length; i++) {
+                var events_obj = {
+                    title: data['appointments'][i]['title'],
+                    start: data['appointments'][i]['start_date'],
+                    end: data['appointments'][i]['end_date']
+                }
+                ex_obj.push(events_obj);
+            }
+            console.log('HEELLOO', ex_obj)
+
+            return ex_obj;
+        }
+    })
+</script>
+
+})
+{% endblock %}
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends 'base.html' %} {% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/overview.css' %}">
+
+<div class="wrapper ">
+    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+        <span class="show-list material-icons">list</span>
+    </a>
+    <div class="sidebar" data-color="purple" data-background-color="black" data-image="./assets/img/sidebar-2.jpg">
+        <div class="logo">
+            <a href="{% url 'overview' %}" class="simple-text logo-normal">
+                Thryve
+            </a>
+            <div id="close-sidebar">
+                <span class="material-icons">close</span>
+            </div>
+        </div>
+        <div class="sidebar-wrapper">
+            <ul class="nav">
+                <li class="nav-item  active">
+                    <a class="nav-link" href="{% url 'overview' %}">
+                        <i class="material-icons">dashboard</i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'appointments' %}">
+                        <i class="material-icons">calendar_today</i>
+                        <p>View Calendar</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'manageData' %}">
+                        <i class="material-icons">folder</i>
+                        <p>Manage Data</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'data_dashboard' %}">
+                        <i class="material-icons">bubble_chart</i>
+                        <p>Data Analysis</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'account' %}">
+                        <i class="material-icons">person</i>
+                        <p>Account Management</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="#">
+                        <i class="material-icons">notifications</i>
+                        <p>Notifications</p>
+                    </a>
+                </li>
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'editmeetingcomments' %}">
+                        <i class="material-icons">subject</i>
+                        <p>Edit Meeting Comments</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'filterData' %}">
+                        <i class="material-icons">find_in_page</i>
+                        <p>Filter Data</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'logout_btn' %}">
+                        <i class="material-icons">backspace</i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <section>
+        <h1 class="welcome">Welcome, {{user.fname}} {{user.lname}}</h1>
+        <div id="data-analysis-container" data-url="{% url 'staff_data' %}"></div>
+        <h2 class="view-appointments"><a href="{% url 'data_dashboard' %}">Analyze Your Data</a></h2>
+        <div style="width:100%;height:450px;" id="googlechartContainer"> </div>
+        <div class="container-dashboard">
+            <div class="appointment-details">
+                <h2 class="view-appointments"><a href="{% url 'appointments' %}">View Your Appointments</a></h2>
+                <table style="width:100%;" class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Student Number</th>
+                            <th>Student Email</th>
+                            <th>Title</th>
+                            <th>Appointment Start</th>
+                            <th>Appointment End</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="tablebody-data">
+                        {% for appointment in appointments %}
+                        <tr>
+                            <td>{{appointment.student_id.fname}}<br>{{appointment.student_id}}</td>
+                            <td>{{appointment.student_id.student_number}}</td>
+                            <td>{{appointment.student_id.email}}</td>
+                            <td>{{appointment.title}}</td>
+                            <td>{{appointment.start_date}}</td>
+                            <td>{{appointment.end_date}}</td>
+                            <td>{{appointment.description}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+            </div>
+        </div>
+    </section>
+    <section>
+
+    </section>
+</div>
+<script src="{% static 'js/overview.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %} {% block content %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/account.css' %}">
+
+<div class="wrapper ">
+    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+        <span class="show-list material-icons">list</span>
+    </a>
+    <div class="sidebar" data-color="purple" data-background-color="black" data-image="./assets/img/sidebar-2.jpg">
+        <div class="logo">
+            <a href="{% url 'overview' %}" class="simple-text logo-normal">
+                Thryve
+            </a>
+            <div id="close-sidebar">
+                <span class="material-icons">close</span>
+            </div>
+        </div>
+        <div class="sidebar-wrapper">
+            <ul class="nav">
+                <li class="nav-item   ">
+                    <a class="nav-link" href="{% url 'overview' %}">
+                        <i class="material-icons">dashboard</i>
+                        <p>Dashboard</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'appointments' %}">
+                        <i class="material-icons">calendar_today</i>
+                        <p>View Calendar</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'manageData' %}">
+                        <i class="material-icons">folder</i>
+                        <p>Manage Data</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'data_dashboard' %}">
+                        <i class="material-icons">bubble_chart</i>
+                        <p>Data Analysis</p>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'account' %}">
+                        <i class="material-icons">person</i>
+                        <p>Account Management</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="#">
+                        <i class="material-icons">notifications</i>
+                        <p>Notifications</p>
+                    </a>
+                </li>
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'editmeetingcomments' %}">
+                        <i class="material-icons">subject</i>
+                        <p>Edit Meeting Comments</p>
+                    </a>
+                </li>
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'filterData' %}">
+                        <i class="material-icons">find_in_page</i>
+                        <p>Filter Data</p>
+                    </a>
+                </li>
+
+
+                <li class="nav-item ">
+                    <a class="nav-link" href="{% url 'logout_btn' %}">
+                        <i class="material-icons">backspace</i>
+                        <p>Logout</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <section>
+        <div class="container">
+            <div class="profile-pic"><img src="{% static 'img/img_avatar2.png' %}" alt="Avatar image of womans">
+            </div>
+            <div class="profile-text">
+                <h1>{{user.fname}} {{user.lname}}</h1>
+                <p class="email_title"><a href="#">{{user.email}}</a> - <span>{{user.job_title}}</span>
+                </p>
+            </div>
+        </div>
+    </section>
+    <section>
+        <h2 class="account-header">Account</h2>
+        <hr>
+        <form id="profile-form" action="{% url 'update-account'%}" method="POST">
+            {% csrf_token %}
+            <div class="container">
+                <label for="username">Username</label>
+                <input type="text" id="username" disabled placeholder="{{userlogin.username}}" name="username">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="{{user.email}}" name="email">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" disabled value="{{userlogin.password}}">
+                <label for="fname">First Name</label>
+                <input type="text" id="fname" placeholder="{{user.fname}}" name="fname">
+                <label for="lname">Last Name</label>
+                <input type="text" id="lname" name="lname" placeholder="{{user.lname}}">
+                <label for="title">Title</label>
+                <input type="text" id="title" placeholder="{{user.job_title}}" name="title">
+                <label></label>
+                <input id="submit" class="submit" type="submit" value="Save">
+                <div>{{user.auth_id.id}}</div>
+            </div>
+        </form>
+    </section>
+</div>
+<script src="{% static 'js/account.js' %}"></script>
+{% endblock %}
